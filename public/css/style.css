@@ -1,0 +1,39 @@
+*{
+    font-family: 'Fira Sans', sans-serif;
+}
+a{
+   text-decoration: none;
+   color: black; 
+}
+.titulo-main{
+    margin-inline: auto;
+    margin-top: 10%;
+    border-bottom: solid 2px yellow;
+    padding-bottom: 2rem;
+    width: 40rem;
+    font-size: 4rem;
+    
+}
+.header-frases{
+    margin-top: 10%;
+    font-size: 4rem;
+    margin-bottom: 4rem;
+}
+.frases{
+    font-weight: 500;
+    font-size: 2rem;
+    width: 25%;
+    margin-inline: auto;
+    border-radius: 2px;
+}
+
+.btn{
+    font-weight: bold;
+}
+
+.form{
+    font-weight: bold;
+    margin-top: 10rem;
+    margin-left: 50%;
+}
+
