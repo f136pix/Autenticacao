@@ -1,11 +1,10 @@
-//ULTILIZANDO O DOTENV PARA ESCONDER OS DADOS NO REP PUBLICO
+// O DOTENV PARA ESCONDER OS DADOS NO REP PUBLICO
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const ejs = require('ejs');
 const mongoose = require('mongoose');
-const encrypt = require('mongoose-encryption');
-
+const md5 = require('md5')
 
 const app = express();
 
@@ -16,18 +15,15 @@ app.set('view engine', 'ejs');
 //Necessario para o funcionamento do Body-Parser
 app.use(bodyParser.urlencoded({extended:true}));
 
-//Conectando ao DB
-mongoose.connect("mongodb+srv://admin:Filipeco123@cluster0.uaaw1ki.mongodb.net/FrasesDB", {useNewUrlParser: true});
+//Conectando ao DB                      //Ultilizando o DOTENV 
+mongoose.connect(`mongodb+srv://admin:${process.env.SENHADB}@cluster0.uaaw1ki.mongodb.net/FrasesDB`, {useNewUrlParser: true});
 
 //Criando o schema do usuario : apenas um email e senha
 //O Schema precisa ser um 'new mongoose.schema', pois so assim conseguimos usar o encrypt
 const schemaUsuario = new mongoose.Schema({
     email: String,
     senha: String
-});
-                                                //O unico campo que desejamos encriptar é senha
-schemaUsuario.plugin(encrypt, {secret: process.env.ENCRIPTAR, encryptedFields: ['senha']});
-
+});                                            
 
 //Criando o model baseado no Schema
 const Usuario = new mongoose.model("Usuario", schemaUsuario)
@@ -47,9 +43,10 @@ app.get('/registrar', ((req, res) => {
 
 app.post('/registrar',((req,res) => {
     const novoUsuario = new Usuario({
-        //Pegando o name dos inputs e aplicando o body-parser
+        //Pegando o name dos inputs no HTML e aplicando o body-parser
         email: req.body.email,
-        senha: req.body.senha
+        //Ultilizando o HASH antes de salvar a senha no BD
+        senha: md5(req.body.senha)   //HASH encripta a senha de maneira irreversivel
     });
 
     //Salvando no DB
@@ -65,7 +62,7 @@ app.post('/registrar',((req,res) => {
 
 app.post('/login', ((req,res) => {
     const user = req.body.email;
-    const senha = req.body.senha;
+    const senha = md5(req.body.senha);
 
     Usuario.findOne({email: user})
     //Usando metodos assincronos
