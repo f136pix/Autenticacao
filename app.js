@@ -4,7 +4,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const ejs = require('ejs');
 const mongoose = require('mongoose');
-const md5 = require('md5')
+//const md5 = require('md5')
+//Usado o Bcrypt para encriptar as senhas
+bcrypt = require('bcrypt');
+//SaltRounds são usados com o bcypt na incriptação, quanto mais, mais segura sera a encriptação
+const saltRounds = 10;
 
 const app = express();
 
@@ -42,35 +46,42 @@ app.get('/registrar', ((req, res) => {
 }));
 
 app.post('/registrar',((req,res) => {
-    const novoUsuario = new Usuario({
-        //Pegando o name dos inputs no HTML e aplicando o body-parser
-        email: req.body.email,
-        //Ultilizando o HASH antes de salvar a senha no BD
-        senha: md5(req.body.senha)   //HASH encripta a senha de maneira irreversivel
-    });
 
-    //Salvando no DB
-    novoUsuario
-        .save()         
-        .then(() => {
-            res.render('frases')
-        })
-        .catch((err) => {
-            console.log(err);
+    //Gerando o HASH com bcrypt, passando como parametro a senha no EJS
+    bcrypt.hash(req.body.senha, saltRounds, function(err, hash) {
+        const novoUsuario = new Usuario({
+            //Pegando o name dos inputs no HTML e aplicando o body-parser
+            email: req.body.email,
+            senha: hash   //Salvando a senha ultilizando o HASH que é devolvido na callback
         });
+    
+        //Salvando no DB
+        novoUsuario
+            .save()         
+            .then(() => {
+                res.render('frases')
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    });
+  
 }));
 
 app.post('/login', ((req,res) => {
     const user = req.body.email;
-    const senha = md5(req.body.senha);
+    const senha = req.body.senha;
 
     Usuario.findOne({email: user})
     //Usando metodos assincronos
     .then((usuarioEncontrado) => {
         if(usuarioEncontrado) {
-            if (usuarioEncontrado.senha === senha){
-                res.render('frases')
-            }
+            bcrypt.compare(senha, usuarioEncontrado.senha, (err, resCallback) => {
+                //Checando se o resultado da função é true, caso seja, podemos realizar o render da pagina frases
+                if(resCallback){
+                    res.render('frases')
+                }
+            });
         }})
         //Lidando com o error
         .catch((err) => {
