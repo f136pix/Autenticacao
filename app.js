@@ -30,7 +30,7 @@ const schemaUsuario = new mongoose.Schema({
 });                                            
 
 //Criando o model baseado no Schema
-const Usuario = new mongoose.model("Usuario", schemaUsuario)
+const Usuario = new mongoose.model("Usuario", schemaUsuario) //Sera salvo na COLLECTIONS Usuario, no caso Usuarios, porque o Mongoose autmaticamente coloca no plural
 
 app.get('/', ((req, res) => {
     res.render('home');
