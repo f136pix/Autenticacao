@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 //const md5 = require('md5')
 //Usado o Bcrypt para encriptar as senhas
 bcrypt = require('bcrypt');
-//SaltRounds são usados com o bcypt na incriptação, quanto mais, mais segura sera a encriptação
+
 const saltRounds = 10;
 
 const app = express();
