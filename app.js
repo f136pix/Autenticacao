@@ -72,7 +72,6 @@ app.post('/login', ((req,res) => {
     const senha = req.body.senha;
 
     Usuario.findOne({email: user})
-    //Usando metodos assincronos
     .then((usuarioEncontrado) => {
         if(usuarioEncontrado) {
             bcrypt.compare(senha, usuarioEncontrado.senha, (err, resCallback) => {
@@ -82,7 +81,6 @@ app.post('/login', ((req,res) => {
                 }
             });
         }})
-        //Lidando com o error
         .catch((err) => {
             console.log(err)
         })
