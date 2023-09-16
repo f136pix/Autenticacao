@@ -23,7 +23,6 @@ app.use(bodyParser.urlencoded({extended:true}));
 mongoose.connect(`mongodb+srv://admin:${process.env.SENHADB}@cluster0.uaaw1ki.mongodb.net/FrasesDB`, {useNewUrlParser: true});
 
 //Criando o schema do usuario : apenas um email e senha
-//O Schema precisa ser um 'new mongoose.schema', pois so assim conseguimos usar o encrypt
 const schemaUsuario = new mongoose.Schema({
     email: String,
     senha: String
